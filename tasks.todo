@@ -1,0 +1,31 @@
+For Today: @today
+  ☐ editing of academic years
+  ☐ editing of courses
+  ☐ editing of venues
+  ☐ staff dashboard
+  ☐ admin dashboard
+
+Login:
+  ☐ remove rotating gif
+  ☐ redirection to staff and admin page
+  ☐ sending of registration email
+
+Others but Important:
+  ☐ @critical setup seeders for
+    ☐ user accounts
+    ☐ venus
+    ☐ courses
+    ☐ groups
+    ☐ editing of schedule templates (admin)
+  ☐ @critical editing of venue
+
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+ ✔ viewing of timetable @done (19-11-02 09:50) @project(For Today)
+ ✔ viewing of rejected timetable @done (19-11-02 09:50) @project(For Today)
+ ✔ viewing of incoming timetable @done (19-11-02 09:50) @project(For Today)
+ ✔ viewing of approved timetable @done (19-11-02 09:50) @project(For Today)
+ ✔ rejection of timetable @done (19-11-02 09:50) @project(For Today)
+ ✔ fix scheduing middleware bug @done (19-11-02 09:50) @project(For Today)
+ ✔ approval of timetable @done (19-11-02 09:50) @project(For Today)

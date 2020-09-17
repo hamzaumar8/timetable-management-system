@@ -1,0 +1,111 @@
+{% extends 'administrator/layout.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="header">
+                <h4 class="title">Add New Class</h4>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form method="post">
+                            {% load widget_tweaks %}
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-md-12">
+                                        <label>Program</label>
+                                        {{ form.program | attr:"placeholder:eg. B.Sc Computer Science" | add_class:'form-control ' }}
+                                        <div class="invalid-feedback">
+                                            {{ form.program.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-md-12">
+                                        <label>Admission Year</label>
+                                        {{ form.admission_year | add_class:'form-control ' }}
+                                        <div class="invalid-feedback">
+                                            {{ form.admission_year.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-md-12">
+                                        <label>Completion Year</label>
+                                        {{ form.completion_year | add_class:'form-control ' }}
+                                        <div class="invalid-feedback">
+                                            {{ form.admission_year.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-md-12">
+                                        <label>Class Size</label>
+                                        {{ form.size | attr:"placeholder:eg. 72" | add_class:'form-control ' }}
+                                        <div class="invalid-feedback">
+                                            {{ form.size.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-light">ADD</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-sm-12">
+        <div class="card">
+            <div class="header">
+                <h4 class="title center">List of Classes</h4>
+            </div>
+            {% if query|length == 0 %}
+            <div class="content">
+                <h3 class="text-danger text-center"><i class="ti-face-sad"></i> No classes have been added yet</p>
+            </div>
+            {% else %}
+            <div class="content table-responsive table-full-width">
+                <table class="table">
+                    <div style="margin:0 20px">{% include 'common/messages.html' %}</div>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Program</th>
+                            <th>Admission Yr</th>
+                            <th>Completion Yr</th>
+                            <th>Size</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in query %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ data.program }}</td>
+                            <td>{{ data.admission_year }}</td>
+                            <td>{{ data.completion_year }}</td>
+                            <td>{{ data.size }}</td>
+                            <td>
+                                <a href="{% url 'admin.class.delete' id=data.id %}" class="btn btn-danger btn-icon"><i class="fa fa-trash"></i></button></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

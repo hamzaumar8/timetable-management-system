@@ -1,0 +1,45 @@
+{% extends 'staff/layout.html' %}
+{% load static %}
+{% block title %}<title>Schedules | Approved</title>{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-sm-12">
+        <div class="card">
+            <div class="content table-responsive table-full-width">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No. </th>
+                            <th>Academic Year</th>
+                            <th>Level</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if schedules|length == 0 %}
+                        <tr>
+                            <td colspan="4">
+                                    <h4 class="text-center">You have no approved schedules</h4>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% for x in schedules %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td> {{ x.academic_year.full_year}} </td>
+                            <td> {{ x.group.level }} </td>
+                            <td>
+                                <!-- TODO: change color -->
+                                <a href="{% url 'staff.schedule.view' id=x.id %}?next={{ request.path }}" class="btn btn-icon btn-primary"> <i class="fa fa-eye"></i>
+                                </a>
+                                <a href="{% url 'staff.schedule.delete' id=x.id %}" class="btn btn-icon btn-danger"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

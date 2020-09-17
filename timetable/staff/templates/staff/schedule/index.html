@@ -1,0 +1,146 @@
+{% extends 'staff/layout.html' %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'common/select2/select2.min.css' %}">
+{% endblock %}
+{% block page_title %} Schedules {% endblock %}
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title"></h4>
+                    </div>
+                    <div class="content">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-8 form-group">
+                                    <label for="class">Class</label>
+                                    {% if classes|length != 0 %}
+                                    <select id="class" class="form-control" name="class" required>
+                                        {% for c in classes %}
+                                        <option value="{{ c.id }}">{{ c.program }} - Level {{ c.level }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% else %}
+                                    <!-- TODO: add link to setup courses -->
+                                    <p class="center">Class Not setup</p>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="courses[]">Course(s)</label>
+                                    <select id="courses" class="form-control" name="courses[]" multiple required> </select>
+                                </div>                                <div class="col-md-12 form-group">
+                                    <label for="venues[]">Venue(s)</label>
+                                    <select id="venues" class="form-control" name="venues[]" multiple required> </select>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <div class="text-right">
+                                        <input type="submit" name="save" value="Save Selection" class="btn">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="header">
+                        {% include 'common/messages.html' %}
+                        <h3 class="title text-center">Schedules</h3>
+                    </div>
+                    <div class="content table-responsive table-full-width">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Academic Year</th>
+                                    <th>Level</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in schedules %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td> {{ x.academic_year.full_year}} </td>
+                                    <td> {{ x.group.level }} </td>
+                                    <td>
+                                        <a href="{#% url 'course-schedule' id=x.id %#}" class="btn btn-icon"> <i class="fa fa-pencil"></i>
+                                        </a>
+
+                                        <a href="{% url 'staff.schedule.setup' id=x.id %}" class="btn btn-icon"> <i class="fa fa-calendar"></i>
+                                        </a>
+
+                                        <a href="{% url 'staff.schedule.await.approval' id=x.id %}" class="btn btn-icon"> <i class="fa fa-send"></i>
+                                        </a>
+                                        <a href="{% url 'staff.schedule.delete' id=x.id %}" class="btn btn-icon btn-danger"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{% static 'common/select2/select2.full.min.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#courses').select2();
+    courses();
+    venues();
+});
+
+let venues = function() {
+    let id = $("#class").val(),
+        el = $("#venues");
+    $("#class").on('change', function(event) {
+        id = $("#class").val();
+        let url = `/staff/schedule/template/${id}/venues`;
+        request(url, el);
+    });
+
+    if (id !== null || id !== "") {
+        let url = `/staff/schedule/template/${id}/venues`;
+        request(url, el);
+    }
+}
+
+let courses = function() {
+    let id = $("#class").val(),
+        el = $("#courses");
+    $("#class").on('change', function(event) {
+        id = $("#class").val();
+        let url = `/staff/schedule/template/${id}/courses`;
+        request(url, el);
+    });
+
+    if (id !== null || id !== "") {
+        let url = `/staff/schedule/template/${id}/courses`;
+        request(url, el);
+    }
+}
+let request = function(url, el) {
+    el.empty();
+    $.ajax({
+        type: "GET",
+        url: url,
+        success: function(data, status, jQxhr) {
+            el.select2({data: data.results });
+        },
+        error: function(jqXhr, status, error) {
+            el.select2({ data: error.data });
+        },
+    });
+}
+</script>
+{% endblock %}

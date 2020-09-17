@@ -1,0 +1,118 @@
+{% extends 'administrator/layout.html' %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'common/select2/select2.min.css' %}">
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-sm-12">
+        <div class="card">
+            <div class="header">
+                <h4 class="title">Add New Schedule</h4>
+            </div>
+            <div class="content">
+                <form method="post">
+                    {% load widget_tweaks %}
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="class">Class</label>
+                            {% if classes|length != 0 %}
+                            <select id="class" class="form-control" name="class" required>
+                                {% for c in classes %}
+                                <option value="{{ c.id }}">{{ c.program }} - Level {{ c.level }}</option>
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <!-- TODO: add link to setup courses -->
+                            <p class="center">Class Not setup</p>
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="courses[]">Course(s)</label>
+                            {% if courses|length != 0 %}
+                            <select id="select-courses" class="form-control" name="courses[]" multiple required>
+                                {% for c in courses %}
+                                <option value="{{ c.id }}">{{ c.code }} {{ c.title }}</option>
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <!-- TODO: add link to setup courses -->
+                            <p class="center">Courses Not setup</p>
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="venues[]">Venue(s)</label>
+                            {% if courses|length != 0 %}
+                            <select id="select-venues" class="form-control" name="venues[]" multiple required>
+                                {% for v in venues %}
+                                <option value="{{ v.id }}">{{ v.name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <!-- TODO: add link to setup venues -->
+                            <p class="center">Venue not setup</p>
+                            {% endif %}
+                        </div>
+                        <br>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Add Schedule</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 col-sm-12">
+        {% include 'common/messages.html' %}
+        <div class="card">
+            <div class="header">
+                <h4 class="title">Schedules</h4>
+            </div>
+            <div class="content table-responsive table-full-width">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <td>Class</td>
+                            <td>Academic Year</td>
+                            <td>Course(s)</td>
+                            <td>Venue(s)</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in schedules %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ s.group.program }} - Level {{ s.group.level }}</td>
+                            <td>{{ s.academic_year.full_year }}</td>
+                            <td>{{ s.courses_list }}</td>
+                            <td>{{ s.venues_list }}</td>
+                            <td>
+                                <a href="{% url 'admin.template.delete' id=s.id %}">
+                                    <button type="submit" class="btn btn-icon btn-danger"><i class="fa fa-trash"></i></button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{% static 'common/select2/select2.full.min.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#select-courses').select2();
+    $('#select-venues').select2();
+    $('#class').select2();
+    $('#academic_year').select2();
+});
+</script>
+{% endblock %}

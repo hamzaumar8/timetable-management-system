@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'common/images/logo.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'common/images/logo.png' %}">
+    <title>Timetable | Login</title>
+     <!-- Animation library for notifications   -->
+     <link href="{% static 'common/css/animate.min.css' %}" rel="stylesheet" >
+     <!-- core CSS    -->
+     <link href="{% static 'common/css/themify-icons.css' %}" rel="stylesheet">
+     <!--  icons -->
+    <link rel="stylesheet" href="{% static 'common/css/nucleo.css' %}">
+    <!-- main style  -->
+    <link rel="stylesheet" href="{% static 'common/css/login.css' %}">
+
+    <script src="{% static 'common/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'common/js/bootstrap-notify.js' %}"></script>
+</head>
+
+<body>
+        <div class="icon-animate">
+                <img src="{% static 'common/images/logo.png' %}" alt="Logo">
+             </div>
+    <div class="wrapper">
+        <div class="box">
+            <form method="post" action="{% url 'login' %}">
+                {% load widget_tweaks %}
+                {% csrf_token %}
+                <h2>Login</h2>
+                {% include 'common/messages.html' %}
+                <div class="input_box">
+                    <div class="input_wrapper">
+                        <div class="input-icon">
+                            <span><i class="ni ni-single-02"></i></span>
+                        </div>
+                        {{ form.username | attr:"placeholder:Username" | add_class:'input_field' }}
+                        <div class="invalid-feedback">
+                            {% for err in form.username.errors %}
+                            {{ err }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="input_box">
+                    <div class="input_wrapper">
+                        <div class="input-icon">
+                            <span><i class="ni ni-lock-circle-open"></i></span>
+                        </div>
+                        {{ form.password | attr:"placeholder:password" | attr:"type:password" | add_class:'input_field' }}
+                        <div class="invalid-feedback">
+                            {% for err in form.password.errors %}
+                            {{ err }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="invalid-feedback">
+                            {% if form.errors %}
+                                <script type="text/javascript">
+                                    $(document).ready(function() {
+                                        $.notify({
+                                            icon: 'ti-face-sad',
+                                            message: "Your username and password didn't match. Please try again"
+
+                                        },{
+                                            type: 'danger',
+                                            timer: 10000,
+                                            placement: {
+                                                from: 'top',
+                                                align: 'center'
+                                            }
+                                        });
+                                    });
+                                </script>
+                            {% endif %}
+                        </div>
+                </div>
+
+                <div class="btn_container">
+                    <button type="submit" class="btn btn-light">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

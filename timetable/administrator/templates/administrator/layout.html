@@ -1,0 +1,185 @@
+{% load static %}
+{% load is_active %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'common/images/logo.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'common/images/logo.png' %}">
+    <title> {{ page_title }}</title>
+    <!-- Bootstrap core CSS     -->
+    <link href="{% static 'common/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <!-- Animation library for notifications   -->
+    <link href="{% static 'common/css/animate.min.css' %}" rel="stylesheet" />
+    <!-- core CSS    -->
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/main.css' %}">
+    <link href="{% static 'common/css/keyframe.css' %}" rel="stylesheet" />
+    <link href="{% static 'common/css/media.css' %}" rel="stylesheet" />
+    <!--  Fonts and icons     -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+    <link href="{% static 'common/css/themify-icons.css' %}" rel="stylesheet">
+    {% block css %} {% endblock %}
+</head>
+
+<body>
+    <div class="icon-animate">
+        <img src="{% static 'common/images/logo.png' %}" alt="Logo">
+     </div>
+    <div class="wrapper">
+        <div class="sidebar">
+            <div class="sidebar-wrapper">
+                <div class="logo">
+                    <a href="#" class="simple-text">
+                            <i class="ti-time" style=" margin-right: 20px;"></i>   Timetable
+                    </a>
+                </div>
+                <ul class="nav">
+                    {% block dashboard %}
+                    <li class="{% is_active request 'admin.dashboard' %}">
+                        <a href="{% url 'admin.dashboard' %}">
+                            <i class="ti-panel"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+                    {% endblock %}
+                    {% block venue %}
+                    <li class="{% is_active request 'admin.venue.index' %}">
+                        <a href="{% url 'admin.venue.index' %}">
+                            <i class="ti-location-pin"></i>
+                            <p>Venue</p>
+                        </a>
+                    </li>
+                    {% endblock %}
+                    {% block courses %}
+                    <li class="{% is_active request 'admin.course.index' %}">
+                        <a href="{% url 'admin.course.index' %}">
+                            <i class="ti-marker"></i>
+                            <p>Courses</p>
+                        </a>
+                    </li>
+                    {% endblock %}
+                    {% block class %}
+                    <li class="{% is_active request 'admin.class.index' %}">
+                        <a href="{% url 'admin.class.index' %}">
+                            <i class="ti-home"></i>
+                            <p>Class</p>
+                        </a>
+                    </li>
+                    {% endblock %}
+                    {% block academic_year %}
+                    <li class="{% is_active request 'academic.year.index' %}">
+                        <a href="{% url 'academic.year.index' %}">
+                            <i class="ti-calendar"></i>
+                            <p>Academic Year</p>
+                        </a>
+                    </li>
+                    {% endblock %}
+                    {% block schedules %}
+                    <!-- TODO: make the schedules buttons toggles able -->
+                    <ul>
+                        <li class="{% is_active request 'admin.schedules.index' %}">
+                            <a href="{% url 'admin.schedules.index' %}">
+                                <i class="ti-time"></i>
+                                <p>New</p>
+                            </a>
+                        </li>
+                        <li class="{% is_active request 'administrator.schedule.incoming' %}">
+                            <a href="{% url 'administrator.schedule.incoming' %}">
+                                <i class="ti-timer"></i>
+                                <p>Incoming <span class="badge badge-success">{{ total_outgoing }}</span></p>
+                            </a>
+                        </li>
+                        <li class="{% is_active request 'administrator.schedule.approvals' %}">
+                            <a href="{% url 'administrator.schedule.approvals' %}">
+                                <i class="ti-timer"></i>
+                                <p>Approvals <span class="badge badge-success">{{ total_approved }}</span></p>
+                            </a>
+                        </li>
+                        <li class="{% is_active request 'administrator.schedule.rejected' %}">
+                            <a href="{% url 'administrator.schedule.rejected' %}">
+                                <i class="ti-timer"></i>
+                                <p>Rejected <span class="badge badge-danger">{{ total_rejected }}</span></p>
+                            </a>
+                        </li>
+                    </ul>
+                    {% endblock %}
+                    {% block new_staff %}
+                    <li>
+                        <a href="{% url 'staff-management' %}">
+                            <i class="ti-id-badge"></i>
+                            <p>New Staff</p>
+                        </a>
+                    </li>
+                    {% endblock %}
+                    <li>
+                        <a href="{% url 'logout' %}?next={% url 'login' %}">
+                            <i class="ti-power-off"></i>
+                            <p>Log Out</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar bar1"></span>
+                            <span class="icon-bar bar2"></span>
+                            <span class="icon-bar bar3"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">
+                            {{ nav_title }}
+                        </a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="ti-user"></i>
+                                    <p>{{ user.username }}</p>
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{% url 'logout' %}?next={% url 'login' %}">Log out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="content">
+                <div class="container-fluid">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="copyright pull-right">
+                        &copy; <script>
+                        document.write(new Date().getFullYear())
+                        </script> <a href="#">Team anonymous</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="{% static 'common/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'common/js/bootstrap.min.js' %}" type="text/javascript"></script>
+    <!--  Checkbox, Radio & Switch Plugins -->
+    <!-- <script src="{% static 'common/js/bootstrap-checkbox-radio.js' %}"></script> -->
+    <!--  Notifications Plugin    -->
+    <script src="{% static 'common/js/bootstrap-notify.js' %}"></script>
+    <script src="{% static 'common/js/main.js' %}"></script>
+    {% block js %} {% endblock %}
+</body>
+
+</html>

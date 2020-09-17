@@ -1,0 +1,88 @@
+{% extends 'administrator/layout.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-5 col-sm-6">
+        <div class="card">
+            <div class="header">
+                <h4 class="title">Add New Course</h4>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form method="post">
+                            {% load widget_tweaks %}
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-md-12">
+                                        <label>Course Code</label>
+                                        {{ new_course.code | add_class:'form-control' | attr:"placeholder:eg. INF101" }}
+                                        {{ new_course.code.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label>Course Title</label>
+                                        {{ new_course.title | add_class:'form-control' | attr:"placeholder:eg. Introduction to Computing" }}
+                                        {{ new_course.title.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label>Credit Hours</label>
+                                        {{ new_course.credit_hours | add_class:"form-control" | attr:"placeholder:eg. 3" | attr:"min:1" | attr:'max:3'}}
+                                        {{ new_course.credit_hours.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">Add Course</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7 col-sm-6">
+        {% include 'common/messages.html' %}
+        <div class="card">
+            <div class="header">
+                <h4 class="title">Courses</h4>
+            </div>
+            <div class="content table-responsive table-full-width">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <td>Course Code</td>
+                            <td>Course Title</td>
+                            <td>Credit Hours</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ course.code }}</td>
+                            <td>{{ course.title }}</td>
+                            <td>{{ course.credit_hours }}</td>
+                            <td>
+                                <a href="{% url 'admin.course.delete' id=course.id %}">
+                                    <button type="submit" class="btn btn-icon btn-danger"><i class="fa fa-trash"></i></button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

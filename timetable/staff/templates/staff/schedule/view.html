@@ -1,0 +1,96 @@
+{% extends 'staff/layout.html' %}
+{% load static %}
+{% block title %}<title>Dashboard | View Schedule</title>{% endblock %}
+{% block page_title %} View Schedule {% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-sm-12">
+        <div class="card">
+            <div class="header">
+                {% if back_button != False %}
+                <div class="text-left">
+                    <a class="btn btn-primary btn-link" href="{{ next }}"><i class="fa fa-arrow-left"></i>  Back</a>
+                </div>
+                {% endif %}
+                <div class="text-center">
+                    <h6 class="" id="status"></h6>
+                </div>
+            </div>
+            <div class="content">
+                <div class="mb-2" id="sked"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+let events_data = JSON.parse("{{ lectures|escapejs }}");
+
+let events = function() {
+    data = [];
+    $.each(events_data, function(key, value) {
+        let start = value.start.split(":"),
+            end = value.end.split(":");
+        data.push({
+            name: value.name,
+            location: value.day,
+            start: today(parseInt(start[0]), parseInt(start[1])),
+            end: today(parseInt(end[0]), parseInt(end[1])),
+            disabled: true
+        });
+    });
+    return data;
+}
+
+var locations = [
+    { id: 'monday', name: 'Monday' },
+    { id: 'tuesday', name: 'Tuesday' },
+    { id: 'wednesday', name: 'Wednesday' },
+    { id: 'thursday', name: 'Thursday' },
+    { id: 'friday', name: 'Friday' },
+];
+
+function today(hours, minutes) {
+    var date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+}
+
+var $sked = $('#sked').skedTape({
+    caption: 'Timetable',
+    start: today(6, 30),
+    end: today(20, 30),
+    showEventTime: true,
+    showEventDuration: true,
+    scrollWithYWheel: true,
+    showDates: false,
+    locations: locations.slice(),
+    events: events().slice(),
+    snapToMins: 0,
+    maxTimeGapHi: 60 * 1000, // 1 minute
+    minGapTimeBetween: 1 * 60 * 1000,
+    editMode: false,
+    timeIndicatorSerifs: true,
+    showIntermission: true,
+    rmbCancelsAdding: false,
+    formatters: {
+        date: function(date) {
+            return $.fn.skedTape.format.date(date, 'l', '.');
+        },
+        duration: function(ms, opts) {
+            return $.fn.skedTape.format.duration(ms, {
+                hrs: 'h.',
+                min: 'min.'
+            });
+        },
+    },
+    canAddIntoLocation: function(location, event) {
+        return false;
+    },
+    postRenderLocation: function($el, location, canAdd) {
+        this.constructor.prototype.postRenderLocation($el, location, canAdd);
+    },
+});
+</script>
+{% endblock %}

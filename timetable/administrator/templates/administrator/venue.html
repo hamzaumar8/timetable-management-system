@@ -1,0 +1,75 @@
+{% extends 'administrator/layout.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="header">
+                <h4 class="title">Add Venue</h4>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form method="post">
+                            {% load widget_tweaks %}
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-md-12">
+                                        {{ form.name | attr:"placeholder:Venue Name" | add_class:'form-control ' }}
+                                        <div class="invalid-feedback">
+                                            {{ form.name.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-md-12">
+                                        {{ form.capacity | attr:"placeholder:Capacity number" | add_class:'form-control | attr:"min:1"' }}
+                                        <div class="invalid-feedback">
+                                            {{ form.capacity.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-light">ADD</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-sm-12">
+        <div class="card">
+            <div class="header">
+                {% include 'common/messages.html' %}
+                <h4 class="title">Venues</h4>
+            </div>
+            <div class="content table-responsive table-full-width">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Capacity</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in venues %}
+                        <tr>
+                            <td>{{ data.name }}</td>
+                            <td>{{ data.capacity }}</td>
+                            <td>
+                                <a href="{% url 'admin.venue.delete' id=data.id %}"><button class="btn btn-icon btn-danger"><i class="fa fa-trash"></i></button></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

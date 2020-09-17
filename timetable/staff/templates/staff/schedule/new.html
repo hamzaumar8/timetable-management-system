@@ -1,0 +1,235 @@
+{% extends 'staff/layout.html' %}
+{% load static %}
+{% block title %}<title>Dashboard | New Schedule</title>{% endblock %}
+{% block css %}
+{% endblock %}
+{% block prepare_schedule %}
+<li class="active">
+    <a href="{% url 'staff.schedule.index' %}">
+        <i class="ti-timer"></i>
+        <p>Prepare Timetable</p>
+    </a>
+</li>
+{% endblock %}
+{% block page_title %} New Schedule {% endblock %}
+{% block modal %}
+<div class="modal fade" id="scheduleDetails" tabindex="-1" role="dialog" aria-labelledby="scheduleDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scheduleDetailsLabel">Schedule Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="class">Course</label>
+                        <select id="course" class="form-control" name="course" required>
+                            <option value="0">--- Select A Venue ---</option>
+                            {% for c in schedules.courses.all %}
+                            <option value="{{ c.id }}">{{ c.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="class">Venue</label>
+                        <select id="courses" class="form-control" name="course" required>
+                            <option value="">--- Select A Venue ---</option>
+                            {% for v in schedules.venues.all %}
+                            <option value="{{ v.id }}">{{ v.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="hours" class="col-form-label">Hours</label>
+                            <input type="number" min="1" class="form-control" id="hours" name="hours" placeholder="Number of Hours" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="minutes" class="col-form-label">Minutes</label>
+                            <input type="number" min="0" class="form-control" id="minutes" name="minutes" placeholder="Number of Minutes" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- TODO: fix positioning bug -->
+                <!-- TODO: implement form validation on 'save' click-->
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id="save-details" data-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-sm-12">
+        <div class="card">
+            <div class="header">
+                <div class="text-right">
+                    <button class="btn btn-primary" id="save-schedules">Save Schedule</button>
+                </div>
+                <div class="text-center">
+                    <h6 class="" id="status"></h6>
+                </div>
+            </div>
+            <div class="content">
+                <div class="">
+                    <div class="alert alert-primary mb-3" style="color: black">
+                        <ul class="mb-0">
+                            <li>Click on an event to move it.</li>
+                            <li>Click on empty space of the timeline to add a new event on predefined position.</li>
+                            <li>Use +- keys to change zooming level.</li>
+                            <li>Use vertical mouse wheel to scroll timeline horizontally.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-2" id="sked1"></div>
+                    <small>
+                        <span class="text-danger">*</span>
+                        To make the example lightweight the timezones in here
+                        are set disregarding the DST, so they may be different
+                        from the actual ones, that's ok.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+let courses_data = JSON.parse("{{ schedules.courses_json|escapejs }}"),
+    venues_data = JSON.parse("{{ schedules.venues_json|escapejs }}"),
+    events_data = JSON.parse("{{ lectures|escapejs }}");
+
+$("#save-schedules").on("click", function(event) {
+    let events_data = JSON.stringify($sked1.data().skedTape.events);
+    $.ajax({
+        type: "POST",
+        url: "{% url 'staff.schedule.setup.save' id=schedules.id %}",
+        data: events_data,
+        success: function(data, status, jQxhr) {
+            console.log(data);
+            $("#status").attr("class", "text-success").text(data.message);
+        },
+        error: function(jqXhr, status, error) {
+            $("#status").attr("class", "text-danger").text(error.message);
+        },
+    });
+});
+
+function get_course(id) {
+    let course = [];
+    $.each(courses_data, function(key, value) {
+        return course = value;
+    });
+    course.fields.id = course.pk;
+    return course.fields;
+}
+
+function get_venue(id) {
+    let venue = [];
+    $.each(venues_data, function(key, value) {
+        return venue = value;
+    });
+    venue.fields.id = venue.pk;
+    return venue.fields;
+}
+let events = function() {
+    data = [];
+    $.each(events_data, function(key, value) {
+        let start = value.start.split(":"),
+            end = value.end.split(":");
+        data.push({
+            name: value.name,
+            location: value.day,
+            start: today(parseInt(start[0]), parseInt(start[1])),
+            end: today(parseInt(end[0]), parseInt(end[1])),
+            disabled: value.disabled
+        });
+    });
+    return data;
+}
+
+var locations = [
+    { id: 'monday', name: 'Monday' },
+    { id: 'tuesday', name: 'Tuesday' },
+    { id: 'wednesday', name: 'Wednesday' },
+    { id: 'thursday', name: 'Thursday' },
+    { id: 'friday', name: 'Friday' },
+];
+
+function today(hours, minutes) {
+    var date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+}
+
+var $sked1 = $('#sked1').skedTape({
+    caption: 'Timetable',
+    start: today(6, 30),
+    end: today(20, 30),
+    showEventTime: true,
+    showEventDuration: true,
+    scrollWithYWheel: true,
+    showDates: false,
+    locations: locations.slice(),
+    events: events().slice(),
+    snapToMins: 0,
+    maxTimeGapHi: 60 * 1000, // 1 minute
+    minGapTimeBetween: 1 * 60 * 1000,
+    editMode: false,
+    timeIndicatorSerifs: true,
+    showIntermission: true,
+    rmbCancelsAdding: true,
+    formatters: {
+        date: function(date) {
+            return $.fn.skedTape.format.date(date, 'l', '.');
+        },
+        duration: function(ms, opts) {
+            return $.fn.skedTape.format.duration(ms, {
+                hrs: 'h.',
+                min: 'min.'
+            });
+        },
+    },
+    canAddIntoLocation: function(location, event) {
+        return true;
+    },
+    beforeAddIntoLocation: function(location, event) {
+    },
+    postRenderLocation: function($el, location, canAdd) {
+        this.constructor.prototype.postRenderLocation($el, location, canAdd);
+    },
+});
+$sked1.on('event:click.skedtape', function(e) {
+    if (!e.detail.event.disabled)
+        $sked1.skedTape('removeEvent', e.detail.event.id);
+});
+$sked1.on('timeline:click.skedtape', function(e, api) {
+    try {
+        $("#scheduleDetails").modal();
+        $('#scheduleDetails').on('hidden.bs.modal', function(event) {
+            var modal = $(this)
+            let course = get_course($('#course').val()),
+                venue = get_venue($('#venue').val()),
+                hours = parseInt($('#hours').val()),
+                minutes = parseInt($("#minutes").val());
+            let length = (hours * 60) + minutes;
+
+            $sked1.skedTape('startAdding', {
+                name: `${course.title} @${venue.name}`,
+                duration: length * 60 * 1000,
+                userData: { "course_id": course.id, "venue_id": venue.id },
+            });
+        });
+    } catch (e) {
+        // if (e.name !== 'SkedTape.CollisionError') throw e;
+        alert('Already exists');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'common/images/logo.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'common/images/logo.png' %}">
+    <title>Timetable | Staff Signup</title>
+    <link rel="stylesheet" href="{% static 'common/css/nucleo.css' %}">
+    <link rel="stylesheet" href="{% static 'common/css/login.css' %}">
+</head>
+
+<body class="reg">
+        <div class="icon-animate">
+                <img src="{% static 'common/images/logo.png' %}" alt="Logo">
+             </div>
+    <div class="wrapper">
+        <div class="box">
+            <form method="post">
+                <h2 style="font-size:30px;">Sign Up</h2>
+                {% load widget_tweaks %}
+                {% csrf_token %}
+                <div class="input_box">
+                    <div class="input_wrapper">
+                        <div class="input-icon">
+                            <span><i class="ni ni-single-02"></i></span>
+                        </div>
+                        {{ user_form.name | attr:"placeholder:Full Name" | add_class:'input_field' }}
+                    </div>
+                    <div class="invalid-feedback">
+                        {% for err in user_form.name.errors %}
+                        <span>{{ err }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="input_box">
+                    <div class="input_wrapper">
+                        <div class="input-icon">
+                            <span><i class="ni ni-single-02"></i></span>
+                        </div>
+                        {{ user_form.username | attr:"placeholder:Username" | add_class:'input_field' }}
+                    </div>
+                    <div class="invalid-feedback">
+                        {% for err in user_form.username.errors %}
+                        <span> {{ err }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="input_box">
+                    <div class="input_wrapper">
+                        <div class="input-icon">
+                            <span><i class="ni ni-email-83"></i></span>
+                        </div>
+                        {{ user_form.email | attr:"placeholder:Email" | add_class:'input_field' }}
+                    </div>
+                    <div class="invalid-feedback">
+                        {% for err in user_form.email.errors %}
+                        <span>{{ err }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="input_box">
+                    <div class="input_wrapper">
+                        <div class="input-icon">
+                            <span><i class="ni ni-lock-circle-open"></i></span>
+                        </div>
+                        {{ user_form.password | attr:"placeholder:password" | attr:"type:Password" | add_class:'input_field' }}
+                    </div>
+                </div>
+                <div class="input_box">
+                    <div class="input_wrapper">
+                        <div class="input-icon">
+                            <span><i class="ni  ni-lock-circle-open"></i></span>
+                        </div>
+                        {{ user_form.confirm_password | attr:"placeholder:Confirm Password" | add_class:'input_field' }}
+                    </div>
+                    <div class="invalid-feedback">
+                        {% for err in user_form.password.errors %}
+                        <span> {{ err }} </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="btn_container">
+                    <button type="submit" class="btn btn-light">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>

@@ -1,0 +1,97 @@
+{% extends 'administrator/layout.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-5 col-sm-6">
+        <div class="card">
+            <div class="header">
+                <h4 class="title">Add New Academic Year</h4>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form method="post">
+                            {% load widget_tweaks %}
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-md-12">
+                                        <label>Start Date</label>
+                                        {{ add_year.start_date | add_class:'form-control' | attr:"placeholder:eg. Start Date" | attr:"type:date" }}
+                                        {{ add_year.start_date.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label>End Date</label>
+                                        {{ add_year.end_date | add_class:'form-control date' | attr:"placeholder:eg. End Date" | attr:"type:date" }}
+                                        {{ add_year.end_date.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label>Semester</label>
+                                        {{ add_year.semester | add_class:"form-control"}}
+                                        {{ add_year.semester.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label>Current?</label>
+                                        {{ add_year.is_current | add_class:"form-control"}}
+                                        {{ add_year.is_current.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">Add Course</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7 col-sm-6">
+        {% include 'common/messages.html' %}
+        <div class="card">
+            <div class="header">
+                <h4 class="title">Academic Years</h4>
+            </div>
+            <div class="content table-responsive table-full-width">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <td>Academic Year</td>
+                            <td>Semester</td>
+                            <td>Current?</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for year in academic_years %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ year.full_year }}</td>
+                            <td>{{ year.format_semester }}</td>
+                            <td>{{ year.is_current }}</td>
+                            <td>
+                                <a href="{% url 'academic.year.delete' id=year.id %}">
+                                    <button type="submit" class="btn btn-icon btn-danger"><i class="fa fa-trash"></i></button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
